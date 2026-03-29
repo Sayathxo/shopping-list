@@ -415,3 +415,32 @@ button {
   min-height: 100vh;
   background: #f0f4f8;
 }
+
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #f0f4f8;
+}
+
+.filter-btn {
+  border: 1.5px solid #e2e8f0;
+  background: white;
+  color: #718096;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.filter-btn.active {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}

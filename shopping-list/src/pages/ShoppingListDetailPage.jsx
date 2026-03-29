@@ -12,10 +12,15 @@ function ShoppingListDetailPage() {
   const navigate = useNavigate();
   const initialList = SHOPPING_LISTS.find((l) => l.id === listId);
   const [list, setList] = useState(initialList);
+  const [showResolved, setShowResolved] = useState(false);
 
   if (!list) return <p>Seznam nenalezen.</p>;
 
   const isOwner = list.ownerId === CURRENT_USER.id;
+
+  const filteredItems = showResolved
+    ? list.items
+    : list.items.filter((i) => !i.resolved);
 
   function handleRenameList(newName) {
     setList({ ...list, name: newName });
@@ -70,8 +75,22 @@ function ShoppingListDetailPage() {
         />
         {isOwner && <AddMemberForm onSubmit={handleAddMember} />}
         <AddItemForm onSubmit={handleAddItem} />
+        <div className="filter-bar">
+          <button
+            className={`filter-btn ${!showResolved ? "active" : ""}`}
+            onClick={() => setShowResolved(false)}
+          >
+            Jen nevyřešené
+          </button>
+          <button
+            className={`filter-btn ${showResolved ? "active" : ""}`}
+            onClick={() => setShowResolved(true)}
+          >
+            Zobrazit vše
+          </button>
+        </div>
         <ItemsList
-          items={list.items}
+          items={filteredItems}
           onDeleteItem={handleDeleteItem}
           onResolveItem={handleResolveItem}
         />
