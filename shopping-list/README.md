@@ -1,16 +1,66 @@
-# React + Vite
+# Nákupní seznamy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Webová aplikace pro správu nákupních seznamů vytvořená v Reactu.
 
-Currently, two official plugins are available:
+## Funkce
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Zobrazení všech nákupních seznamů
+- Vytvoření nového seznamu
+- Smazání seznamu
+- Detail seznamu s položkami a členy
+- Přidávání a odebírání položek ze seznamu
+- Označování položek jako vyřešené
+- Správa členů seznamu
 
-## React Compiler
+## Technologie
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** — UI framework
+- **React Router v7** — klientské routování
+- **Vite** — build nástroj a dev server
 
-## Expanding the ESLint configuration
+## Instalace a spuštění
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+# Nainstaluj závislosti
+npm install
+
+# Spusť vývojový server
+npm run dev
+```
+
+Aplikace poběží na `http://localhost:5173`.
+
+## Struktura projektu
+
+```
+src/
+├── pages/
+│   ├── ShoppingListsPage.jsx
+│   └── ShoppingListDetailPage.jsx
+├── components/
+│   ├── lists/
+│   │   ├── PageHeader.jsx
+│   │   ├── CreateListButton.jsx
+│   │   ├── ShoppingListsGrid.jsx
+│   │   └── ShoppingListCard.jsx
+│   └── detail/
+│       ├── ListHeader.jsx
+│       ├── MembersSection.jsx
+│       ├── MemberRow.jsx
+│       ├── AddMemberForm.jsx
+│       ├── AddItemForm.jsx
+│       ├── ItemsList.jsx
+│       └── ItemRow.jsx
+├── constants/
+│   └── data.js
+└── App.jsx
+```
+
+## Dostupné příkazy
+
+| Příkaz | Popis |
+|--------|-------|
+| `npm run dev` | Spustí vývojový server |
+| `npm run build` | Sestaví produkční build |
+| `npm run preview` | Spustí preview produkčního buildu |
+| `npm run lint` | Spustí ESLint |
