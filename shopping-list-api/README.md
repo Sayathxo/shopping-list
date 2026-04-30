@@ -1,16 +1,24 @@
 # Shopping List API
 
-REST API pro správu nákupních seznamů postavené na Node.js a Express.js.
+REST API pro správu nákupních seznamů postavené na Node.js a Express.js s MongoDB.
 
 ## Požadavky
 
 - Node.js
 - npm
+- MongoDB (lokálně nebo Atlas)
 
 ## Instalace
 
 ```bash
 npm install
+```
+
+Vytvořte soubor `.env` s připojením k databázi:
+
+```env
+MONGODB_URI=mongodb://localhost:27017
+PORT=3000
 ```
 
 ## Spuštění
@@ -41,7 +49,7 @@ Příklad:
 x-user-id: u1
 ```
 
-## Profily
+## Oprávnění
 
 - **Authenticated User** — přihlášený uživatel. Může vytvářet a zobrazovat nákupní seznamy.
 - **Member** — člen seznamu. Může zobrazovat detail, přidávat/odebírat položky, označovat jako vyřešené a odejít ze seznamu.
@@ -87,7 +95,7 @@ Content-Type: application/json
 
 ### Přidání položky
 ```
-POST /lists/list1/items
+POST /lists/{listId}/items
 x-user-id: u1
 Content-Type: application/json
 
@@ -98,7 +106,7 @@ Content-Type: application/json
 
 ### Označení položky jako vyřešené
 ```
-POST /lists/list1/items/i1/resolve
+POST /lists/{listId}/items/{itemId}/resolve
 x-user-id: u1
 ```
 
@@ -109,9 +117,11 @@ src/
 ├── routes/
 │   ├── shoppingList.js        # endpointy pro správu seznamů
 │   └── shoppingListItem.js    # endpointy pro správu položek
+├── db/
+│   ├── shoppingListDao.js     # databázové operace pro seznamy
+│   └── shoppingListItemDao.js # databázové operace pro položky
 ├── middleware/
-│   ├── auth.js                # autorizace a simulovaná data
+│   ├── auth.js                # autorizace a simulace uživatelů
 │   └── validate.js            # validace vstupních dat
 └── app.js                     # hlavní soubor aplikace
 ```
-
