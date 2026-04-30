@@ -1,65 +1,122 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { SHOPPING_LISTS, CURRENT_USER } from "../constants/data";
+import {
+  CURRENT_USER_ID,
+  KNOWN_USERS,
+  getList,
+  renameList,
+  addMember,
+  removeMember,
+  leaveList,
+  addItem,
+  deleteItem,
+  resolveItem,
+} from "../api/shoppingListApi";
 import ListHeader from "../components/detail/ListHeader";
 import MembersSection from "../components/detail/MembersSection";
 import AddMemberForm from "../components/detail/AddMemberForm";
 import AddItemForm from "../components/detail/AddItemForm";
 import ItemsList from "../components/detail/ItemsList";
 
+const CURRENT_USER = KNOWN_USERS.find((u) => u.id === CURRENT_USER_ID);
+
 function ShoppingListDetailPage() {
   const { listId } = useParams();
   const navigate = useNavigate();
-  const initialList = SHOPPING_LISTS.find((l) => l.id === listId);
-  const [list, setList] = useState(initialList);
+  const [list, setList] = useState(null);
+  const [status, setStatus] = useState("pending");
+  const [error, setError] = useState(null);
   const [showResolved, setShowResolved] = useState(false);
 
-  if (!list) return <p>Seznam nenalezen.</p>;
+  useEffect(() => {
+    getList(listId)
+      .then((data) => {
+        setList(data);
+        setStatus("ready");
+      })
+      .catch((err) => {
+        setError(err.message);
+        setStatus("error");
+      });
+  }, [listId]);
 
-  const isOwner = list.ownerId === CURRENT_USER.id;
+  if (status === "pending") return <p className="status-message">Načítání...</p>;
+  if (status === "error") return <p className="status-message error">Chyba: {error}</p>;
 
-  const filteredItems = showResolved
-    ? list.items
-    : list.items.filter((i) => !i.resolved);
+  const isOwner = list.ownerId === CURRENT_USER_ID;
+  const filteredItems = showResolved ? list.items : list.items.filter((i) => !i.resolved);
+  const availableUsers = KNOWN_USERS.filter((u) => !list.members.some((m) => m.id === u.id));
 
-  function handleRenameList(newName) {
-    setList({ ...list, name: newName });
+  async function handleRenameList(newName) {
+    try {
+      const updated = await renameList(list.id, newName);
+      setList(updated);
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
-  function handleAddMember(name) {
-    const newMember = { id: "u" + Date.now(), name };
-    setList({ ...list, members: [...list.members, newMember] });
+  async function handleAddMember(userId) {
+    try {
+      const result = await addMember(list.id, userId);
+      setList((prev) => ({ ...prev, members: result.members }));
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
-  function handleRemoveMember(userId) {
-    setList({ ...list, members: list.members.filter((m) => m.id !== userId) });
+  async function handleRemoveMember(userId) {
+    try {
+      const result = await removeMember(list.id, userId);
+      setList((prev) => ({ ...prev, members: result.members }));
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
-  function handleLeaveList() {
-    setList({ ...list, members: list.members.filter((m) => m.id !== CURRENT_USER.id) });
+  async function handleLeaveList() {
+    try {
+      await leaveList(list.id);
+      navigate("/lists");
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
-  function handleAddItem(name) {
-    const newItem = { id: "i" + Date.now(), name, resolved: false };
-    setList({ ...list, items: [...list.items, newItem] });
+  async function handleAddItem(name) {
+    try {
+      const newItem = await addItem(list.id, name);
+      setList((prev) => ({ ...prev, items: [...prev.items, newItem] }));
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
-  function handleDeleteItem(itemId) {
-    setList({ ...list, items: list.items.filter((i) => i.id !== itemId) });
+  async function handleDeleteItem(itemId) {
+    try {
+      await deleteItem(list.id, itemId);
+      setList((prev) => ({ ...prev, items: prev.items.filter((i) => i.id !== itemId) }));
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
-  function handleResolveItem(itemId) {
-    setList({
-      ...list,
-      items: list.items.map((i) =>
-        i.id === itemId ? { ...i, resolved: !i.resolved } : i
-      ),
-    });
+  async function handleResolveItem(itemId) {
+    try {
+      const updatedItem = await resolveItem(list.id, itemId);
+      setList((prev) => ({
+        ...prev,
+        items: prev.items.map((i) => (i.id === itemId ? updatedItem : i)),
+      }));
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   return (
     <div>
       <div className="detail-container">
+        {error && <p className="status-message error">Chyba: {error}</p>}
         <ListHeader
           name={list.name}
           isOwner={isOwner}
@@ -69,11 +126,13 @@ function ShoppingListDetailPage() {
         <MembersSection
           members={list.members}
           ownerId={list.ownerId}
-          currentUserId={CURRENT_USER.id}
+          currentUserId={CURRENT_USER_ID}
           onRemoveMember={handleRemoveMember}
           onLeaveList={handleLeaveList}
         />
-        {isOwner && <AddMemberForm onSubmit={handleAddMember} />}
+        {isOwner && availableUsers.length > 0 && (
+          <AddMemberForm availableUsers={availableUsers} onSubmit={handleAddMember} />
+        )}
         <AddItemForm onSubmit={handleAddItem} />
         <div className="filter-bar">
           <button
