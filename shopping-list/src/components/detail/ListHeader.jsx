@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function ListHeader({ name, isOwner, onRename, onClose }) {
+  const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(name);
 
@@ -18,7 +20,7 @@ function ListHeader({ name, isOwner, onRename, onClose }) {
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
-          <button className="save-btn" onClick={handleSubmit}>Uložit</button>
+          <button className="save-btn" onClick={handleSubmit}>{t("save")}</button>
         </>
       ) : (
         <>

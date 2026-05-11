@@ -11,6 +11,7 @@ function ShoppingListsGrid({ lists, currentUser, onDeleteList }) {
           key={list.id}
           id={list.id}
           name={list.name}
+          items={list.items}
           memberCount={list.members.length}
           isOwner={list.ownerId === currentUser.id}
           onOpenList={(id) => navigate(`/lists/${id}`)}

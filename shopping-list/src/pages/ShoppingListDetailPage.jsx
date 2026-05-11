@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   CURRENT_USER_ID,
   KNOWN_USERS,
@@ -17,12 +18,14 @@ import MembersSection from "../components/detail/MembersSection";
 import AddMemberForm from "../components/detail/AddMemberForm";
 import AddItemForm from "../components/detail/AddItemForm";
 import ItemsList from "../components/detail/ItemsList";
+import ItemsChart from "../components/detail/ItemsChart";
 
 const CURRENT_USER = KNOWN_USERS.find((u) => u.id === CURRENT_USER_ID);
 
 function ShoppingListDetailPage() {
   const { listId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [list, setList] = useState(null);
   const [status, setStatus] = useState("pending");
   const [error, setError] = useState(null);
@@ -40,8 +43,8 @@ function ShoppingListDetailPage() {
       });
   }, [listId]);
 
-  if (status === "pending") return <p className="status-message">Načítání...</p>;
-  if (status === "error") return <p className="status-message error">Chyba: {error}</p>;
+  if (status === "pending") return <p className="status-message">{t("loading")}</p>;
+  if (status === "error") return <p className="status-message error">{t("error")}: {error}</p>;
 
   const isOwner = list.ownerId === CURRENT_USER_ID;
   const filteredItems = showResolved ? list.items : list.items.filter((i) => !i.resolved);
@@ -114,15 +117,16 @@ function ShoppingListDetailPage() {
   }
 
   return (
-    <div>
+    <div className="page-wrapper">
       <div className="detail-container">
-        {error && <p className="status-message error">Chyba: {error}</p>}
+        {error && <p className="status-message error">{t("error")}: {error}</p>}
         <ListHeader
           name={list.name}
           isOwner={isOwner}
           onRename={handleRenameList}
           onClose={() => navigate("/lists")}
         />
+        <ItemsChart items={list.items} />
         <MembersSection
           members={list.members}
           ownerId={list.ownerId}
@@ -139,13 +143,13 @@ function ShoppingListDetailPage() {
             className={`filter-btn ${!showResolved ? "active" : ""}`}
             onClick={() => setShowResolved(false)}
           >
-            Jen nevyřešené
+            {t("unresolvedOnly")}
           </button>
           <button
             className={`filter-btn ${showResolved ? "active" : ""}`}
             onClick={() => setShowResolved(true)}
           >
-            Zobrazit vše
+            {t("showAll")}
           </button>
         </div>
         <ItemsList

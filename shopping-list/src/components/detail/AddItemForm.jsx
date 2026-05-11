@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function AddItemForm({ onSubmit }) {
+  const { t } = useTranslation();
   const [value, setValue] = useState("");
 
   function handleSubmit() {
@@ -9,14 +11,22 @@ function AddItemForm({ onSubmit }) {
     setValue("");
   }
 
+  function handleKeyDown(e) {
+    if (e.key === "Enter") handleSubmit();
+  }
+
   return (
-    <div className="add-item-form">
-      <input
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Název položky"
-      />
-      <button onClick={handleSubmit}>Přidat</button>
+    <div>
+      <p className="form-label">{t("addItem")}</p>
+      <div className="add-item-form">
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={t("addItemPlaceholder")}
+        />
+        <button onClick={handleSubmit}>{t("add")}</button>
+      </div>
     </div>
   );
 }
