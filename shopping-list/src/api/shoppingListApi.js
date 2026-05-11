@@ -94,10 +94,30 @@ function normalizeList(raw) {
 export function getLists() {
   if (USE_MOCK) {
     return Promise.resolve(
-      clone(mockLists.filter((l) => !l.archived && l.members.some((m) => m.id === CURRENT_USER_ID)))
+      clone(mockLists.filter((l) => l.members.some((m) => m.id === CURRENT_USER_ID)))
     );
   }
   return apiFetch("/lists").then((data) => data.itemList.map(normalizeList));
+}
+
+export function archiveList(listId) {
+  if (USE_MOCK) {
+    const list = mockLists.find((l) => l.id === listId);
+    if (!list) return Promise.reject(new Error("Seznam nenalezen"));
+    list.archived = true;
+    return Promise.resolve(clone(list));
+  }
+  return apiFetch(`/lists/${listId}/archive`, { method: "POST" }).then(normalizeList);
+}
+
+export function unarchiveList(listId) {
+  if (USE_MOCK) {
+    const list = mockLists.find((l) => l.id === listId);
+    if (!list) return Promise.reject(new Error("Seznam nenalezen"));
+    list.archived = false;
+    return Promise.resolve(clone(list));
+  }
+  return apiFetch(`/lists/${listId}/unarchive`, { method: "POST" }).then(normalizeList);
 }
 
 export function createList(name) {

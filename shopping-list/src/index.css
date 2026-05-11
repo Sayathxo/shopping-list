@@ -178,9 +178,12 @@ button {
 
 .lists-toolbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding: 14px 20px;
   border-bottom: 1px solid var(--border-light);
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .create-btn {
@@ -251,6 +254,70 @@ button {
 .list-card-role.member {
   background: var(--success-light);
   color: var(--success-text);
+}
+
+.archive-toggle-btn {
+  background: var(--bg-surface-2);
+  border: 1.5px solid var(--border);
+  color: var(--text-muted);
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.archive-toggle-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.archive-toggle-btn.active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.archived-count-badge {
+  background: var(--accent);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  line-height: 1.4;
+}
+
+.list-card--archived {
+  opacity: 0.7;
+  background: var(--bg-surface-2);
+}
+
+.list-card-archived-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: var(--badge-owner-bg);
+  color: var(--badge-owner-text);
+}
+
+.archive-btn {
+  background: none;
+  border: none;
+  font-size: 15px;
+  color: var(--text-faint);
+  padding: 2px 5px;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.archive-btn:hover {
+  color: var(--accent);
+  background: var(--accent-light);
 }
 
 .delete-btn {

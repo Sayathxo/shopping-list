@@ -46,6 +46,13 @@ const cs = {
     delete: "Smazat",
     selectMember: "-- Vyberte uživatele --",
 
+    // Archive
+    archive: "Archivovat",
+    unarchive: "Obnovit",
+    archivedBadge: "Archivováno",
+    showArchived: "Zobrazit archivované",
+    hideArchived: "Skrýt archivované",
+
     // Theme
     darkMode: "Tmavý režim",
     lightMode: "Světlý režim",

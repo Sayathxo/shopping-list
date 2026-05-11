@@ -46,6 +46,13 @@ const en = {
     delete: "Delete",
     selectMember: "-- Select user --",
 
+    // Archive
+    archive: "Archive",
+    unarchive: "Restore",
+    archivedBadge: "Archived",
+    showArchived: "Show archived",
+    hideArchived: "Hide archived",
+
     // Theme
     darkMode: "Dark mode",
     lightMode: "Light mode",

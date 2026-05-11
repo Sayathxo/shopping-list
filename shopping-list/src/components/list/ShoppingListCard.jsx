@@ -14,10 +14,7 @@ function ItemCountBar({ items }) {
         <span>{pct}%</span>
       </div>
       <div className="item-count-track">
-        <div
-          className={`item-count-fill${isFull ? " full" : ""}`}
-          style={{ width: `${pct}%` }}
-        />
+        <div className={`item-count-fill${isFull ? " full" : ""}`} style={{ width: `${pct}%` }} />
       </div>
       <div className="item-count-numbers">
         <span className="count-resolved">✓ {resolved}</span>
@@ -27,18 +24,34 @@ function ItemCountBar({ items }) {
   );
 }
 
-function ShoppingListCard({ id, name, items, memberCount, isOwner, onOpenList, onDeleteList }) {
+function ShoppingListCard({
+  id, name, items, memberCount, isOwner, archived,
+  onOpenList, onDeleteList, onArchiveList, onUnarchiveList,
+}) {
   const { t } = useTranslation();
 
   return (
-    <div className="list-card">
+    <div className={`list-card${archived ? " list-card--archived" : ""}`}>
       <div className="list-card-top">
         <span className="list-card-name">{name}</span>
         <div className="list-card-right">
-          <span className={`list-card-role ${isOwner ? "" : "member"}`}>
+          {archived && (
+            <span className="list-card-archived-badge">{t("archivedBadge")}</span>
+          )}
+          <span className={`list-card-role${isOwner ? "" : " member"}`}>
             {isOwner ? t("owner") : t("member")}
           </span>
-          {isOwner && (
+          {isOwner && !archived && (
+            <button className="archive-btn" title={t("archive")} onClick={() => onArchiveList(id)}>
+              📦
+            </button>
+          )}
+          {isOwner && archived && (
+            <button className="archive-btn" title={t("unarchive")} onClick={() => onUnarchiveList(id)}>
+              ↩
+            </button>
+          )}
+          {isOwner && !archived && (
             <button className="delete-btn" onClick={() => onDeleteList(id)}>✕</button>
           )}
         </div>
@@ -48,7 +61,9 @@ function ShoppingListCard({ id, name, items, memberCount, isOwner, onOpenList, o
           <span className="member-count">👥 {memberCount}</span>
           <ItemCountBar items={items} />
         </div>
-        <button className="detail-btn" onClick={() => onOpenList(id)}>{t("detail")}</button>
+        {!archived && (
+          <button className="detail-btn" onClick={() => onOpenList(id)}>{t("detail")}</button>
+        )}
       </div>
     </div>
   );
